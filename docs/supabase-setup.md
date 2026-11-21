@@ -102,6 +102,47 @@ Supabase's dashboard only accepts the exact base URL here, not `http://localhost
 
 ---
 
+## 4b. Enable Google sign-in (optional)
+
+The site already has **Continue with Google** buttons. To activate them:
+
+**In Google Cloud:**
+
+1. Open <https://console.cloud.google.com/apis/credentials>.
+2. Select or create a project.
+3. Click **Create credentials → OAuth client ID**.
+4. Choose **Web application**.
+5. Under **Authorized JavaScript origins**, add:
+   ```text
+   https://mmu-sharehub-1.vercel.app
+   http://localhost:5500
+   ```
+6. Under **Authorized redirect URIs**, add exactly:
+   ```text
+   https://bpygjjejaxzqwgclyrad.supabase.co/auth/v1/callback
+   ```
+7. Click **Create**, then copy the **Client ID** and **Client secret**.
+
+If the OAuth consent screen is in Testing mode, add your own Google email as a
+**Test user** under Audience; otherwise sign-in will be blocked.
+
+**In Supabase:**
+
+1. Open **Authentication → Providers → Google**.
+2. Turn **Enable Sign in with Google** on.
+3. Paste the Google **Client ID** into the **Client IDs** box.
+4. Paste the Google **Client secret** into the **Client Secret (for OAuth)** box.
+5. Click **Save**.
+
+> These are Google's OAuth credentials, **not** the Supabase URL or publishable
+> key. The Client ID usually ends in `.apps.googleusercontent.com`.
+
+After saving, the button on `login.html` and `register.html` opens Google's
+consent screen. Google returns to Supabase's callback, then Supabase returns to
+the site's base URL and the app redirects to `profile.html`.
+
+---
+
 ## 5. Verify the setup
 
 1. Start your local server: `python -m http.server 5500`.

@@ -22,7 +22,7 @@ JavaScript. No React, no build step, no framework.
 - [x] Browse page with working search, filters, sorting and shareable URLs
 - [x] Note cards with file type, size, uploader and real preview/download actions
 - [x] Login and register forms with native validation and password show/hide
-- [x] Supabase Authentication: register, log in, log out and password reset
+- [x] Supabase Authentication: email/password + Google sign-in, logout, password reset
 - [x] Session-aware navbar with an avatar + name for signed-in students
 - [x] `profiles` rows created on sign-up and restored on later logins
 - [x] Upload and profile pages gated by sign-in state

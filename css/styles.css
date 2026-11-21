@@ -1804,6 +1804,40 @@ body.nav-open .nav-toggle span:nth-child(3) {
   margin-top: 22px;
 }
 
+.btn-google {
+  color: var(--ink-soft);
+  background: #fff;
+  border-color: var(--line-strong);
+  font-weight: 600;
+}
+
+.btn-google:hover {
+  background: var(--surface-soft);
+  border-color: #c4c3bc;
+}
+
+.btn-google svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 4px;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+
 .setup-notice {
   margin-top: 20px;
   padding: 12px 13px;

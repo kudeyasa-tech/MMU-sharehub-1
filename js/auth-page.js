@@ -12,6 +12,7 @@ import {
   loginUser,
   registerUser,
   sendPasswordReset,
+  signInWithGoogle,
   updatePassword,
   watchAuthState,
 } from "./auth.js";
@@ -152,6 +153,30 @@ form?.querySelectorAll("input").forEach((input) => {
 
 resetForm?.querySelectorAll("input").forEach((input) => {
   input.addEventListener("input", () => clearMessage(resetMessage));
+});
+
+document.querySelectorAll("[data-google-signin]").forEach((button) => {
+  button.addEventListener("click", async () => {
+    if (!isSupabaseConfigured) {
+      if (setupNotice) setupNotice.hidden = false;
+      showMessage(
+        "Supabase is not configured yet. Paste your project URL and anon key into js/supabase-config.js, then reload the page.",
+        "error",
+        resetModeMessage()
+      );
+      return;
+    }
+
+    setBusy(button, true, "Connecting…");
+
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.warn("Google sign-in failed:", error);
+      showMessage(getAuthErrorMessage(error), "error", resetModeMessage());
+      setBusy(button, false, "Continue with Google");
+    }
+  });
 });
 
 forgotButton?.addEventListener("click", async () => {

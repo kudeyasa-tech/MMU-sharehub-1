@@ -279,6 +279,16 @@ watchAuthState((user, meta) => {
     return;
   }
 
+  // Google OAuth also returns to the base URL. Once Supabase has exchanged the
+  // code, take the student to their profile instead of leaving them on Home.
+  const oauthReturn =
+    new URLSearchParams(window.location.search).has("code") ||
+    window.location.hash.includes("access_token");
+  if (user && oauthReturn && body.dataset.page !== "profile") {
+    window.location.replace("profile.html?welcome=1");
+    return;
+  }
+
   updateAuthUI(user);
 });
 

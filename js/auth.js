@@ -227,6 +227,22 @@ export async function loginUser({ email, password }) {
   return data.user;
 }
 
+/**
+ * Start Google OAuth. Supabase redirects to the exact base URL, then the app
+ * sends the student to their profile after processing the callback.
+ */
+export async function signInWithGoogle() {
+  const supabase = await getSupabase();
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/`,
+    },
+  });
+
+  if (error) throw error;
+}
+
 /** Set a new password after a password-recovery session. */
 export async function updatePassword(password) {
   const newPassword = String(password || "");
