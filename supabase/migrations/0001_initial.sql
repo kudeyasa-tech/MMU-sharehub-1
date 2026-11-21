@@ -39,6 +39,26 @@ to authenticated
 using (auth.uid() = id)
 with check (auth.uid() = id);
 
+-- A student may change the display name, but not their identity or join date.
+create or replace function public.protect_profile_identity()
+returns trigger
+language plpgsql
+as $$
+begin
+  if new.id is distinct from old.id
+    or new.email is distinct from old.email
+    or new.created_at is distinct from old.created_at then
+    raise exception 'Profile identity fields cannot be changed';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists profiles_protect_identity on public.profiles;
+create trigger profiles_protect_identity
+before update on public.profiles
+for each row execute function public.protect_profile_identity();
+
 -- ---------------------------------------------------------------------------
 -- 2. Notes metadata
 --    Public reads, authenticated writes, owner-only edits and deletes.
@@ -59,7 +79,9 @@ create table if not exists public.notes (
   ),
   year text not null check (year in ('Year 1', 'Year 2', 'Year 3', 'Year 4')),
   description text not null check (char_length(description) between 10 and 500),
-  file_url text not null check (file_url like 'https://%'),
+  file_url text not null check (
+    file_url like 'https://bpygjjejaxzqwgclyrad.supabase.co/storage/v1/object/public/notes/%'
+  ),
   file_type text not null check (
     file_type in ('PDF', 'DOC', 'DOCX', 'PPT', 'PPTX', 'TXT', 'JPG', 'JPEG', 'PNG')
   ),
@@ -67,6 +89,12 @@ create table if not exists public.notes (
   uploader_id uuid not null references auth.users(id) on delete cascade,
   uploader_name text not null check (char_length(uploader_name) between 2 and 80),
   created_at timestamptz not null default now()
+);
+
+-- Existing tables keep their old CHECK constraint, so replace it explicitly.
+alter table public.notes drop constraint if exists notes_file_url_check;
+alter table public.notes add constraint notes_file_url_check check (
+  file_url like 'https://bpygjjejaxzqwgclyrad.supabase.co/storage/v1/object/public/notes/%'
 );
 
 create index if not exists notes_created_at_idx on public.notes (created_at desc);
@@ -143,11 +171,15 @@ create table if not exists public.reports (
       'other'
     )
   ),
-  details text,
+  details text check (char_length(details) <= 500),
   status text not null default 'open' check (status in ('open', 'reviewed', 'resolved')),
   created_at timestamptz not null default now(),
   unique (note_id, reporter_id)
 );
+
+alter table public.reports drop constraint if exists reports_details_check;
+alter table public.reports add constraint reports_details_check
+  check (char_length(details) <= 500);
 
 alter table public.reports enable row level security;
 
@@ -207,6 +239,7 @@ with check (
   bucket_id = 'notes'
   and (storage.foldername(name))[1] = 'notes'
   and (storage.foldername(name))[2] = auth.uid()::text
+  and name ~* '\.(pdf|docx?|pptx?|txt|jpe?g|png)$'
 );
 
 drop policy if exists "Users can delete their own files" on storage.objects;

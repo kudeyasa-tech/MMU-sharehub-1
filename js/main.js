@@ -9,13 +9,14 @@
  * - Upload/profile sign-in gates
  * - Home page "recent notes" list
  *
- * Supabase Authentication is connected in Phase 2. Database reads and file
- * uploads follow in Phases 3–4.
+ * Supabase handles authentication and note data. Page-specific scripts handle
+ * upload, profile and note details.
  */
 
 import { isSupabaseConfigured, logoutUser, watchAuthState } from "./auth.js";
 import { getNotes } from "./database.js";
 import { createNoteCard, getInitials } from "./notes.js";
+import { isAllowedFileUrl } from "./security.js";
 
 const body = document.body;
 const header = document.querySelector("[data-header]");
@@ -143,16 +144,26 @@ document.addEventListener("click", (event) => {
   const preview = event.target.closest("[data-preview-url]");
   if (preview) {
     event.preventDefault();
-    window.open(preview.dataset.previewUrl, "_blank", "noopener,noreferrer");
+    const url = preview.dataset.previewUrl;
+    if (isAllowedFileUrl(url)) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else {
+      showToast("That file link is not from this library.");
+    }
     return;
   }
 
   const download = event.target.closest("[data-download-url]");
   if (download) {
     event.preventDefault();
+    const url = download.dataset.downloadUrl;
+    if (!isAllowedFileUrl(url)) {
+      showToast("That file link is not from this library.");
+      return;
+    }
     const link = document.createElement("a");
-    link.href = download.dataset.downloadUrl;
-    link.rel = "noopener";
+    link.href = url;
+    link.rel = "noopener noreferrer";
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();

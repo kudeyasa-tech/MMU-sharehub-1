@@ -1,7 +1,7 @@
 /**
  * Upload page controller
  * ----------------------
- * Phase 3 connects the form to Supabase Storage and the `notes` table:
+ * The upload flow:
  *   1. Validate the selected file with the shared helpers.
  *   2. Upload to notes/{user-id}/{note-id}/{file-name} with real progress.
  *   3. Save note metadata so the file appears in the public library.
@@ -14,6 +14,7 @@
 
 import { getUserProfile } from "./auth.js";
 import { createNote } from "./database.js";
+import { getFriendlyErrorMessage } from "./errors.js";
 import { formatFileSize } from "./notes.js";
 import {
   getFileTypeLabel,
@@ -123,13 +124,11 @@ function uploadFile(path, file, accessToken) {
         return;
       }
 
-      let detail = "";
-      try {
-        detail = JSON.parse(xhr.responseText)?.message || "";
-      } catch {
-        detail = xhr.responseText?.slice(0, 160) || "";
-      }
-      reject(new Error(detail || `Upload failed (${xhr.status}).`));
+      // Do not pass Storage's raw response into the UI. It can contain
+      // internal paths and request identifiers.
+      const error = new Error("Upload failed. Check the file and try again.");
+      error.code = "app/upload";
+      reject(error);
     });
 
     xhr.addEventListener("error", () =>
@@ -259,7 +258,9 @@ form?.addEventListener("submit", async (event) => {
     } = await supabase.auth.getSession();
 
     if (!session?.user) {
-      throw new Error("Your session has ended. Please log in again.");
+      const error = new Error("Your session has ended. Please log in again.");
+      error.code = "app/session";
+      throw error;
     }
 
     const user = session.user;
@@ -276,7 +277,9 @@ form?.addEventListener("submit", async (event) => {
       .getPublicUrl(path);
 
     if (!publicData?.publicUrl) {
-      throw new Error("Could not build a public file URL. Check the notes bucket.");
+      const error = new Error("Could not build a public file URL. Check the notes bucket.");
+      error.code = "app/config";
+      throw error;
     }
 
     let uploaderName =
@@ -322,7 +325,7 @@ form?.addEventListener("submit", async (event) => {
       }
     }
 
-    showMessage(error?.message || "Upload failed. Please try again.", "error");
+    showMessage(getFriendlyErrorMessage(error, "Upload failed. Please try again."), "error");
     setLoading(false);
     hideProgress();
   }

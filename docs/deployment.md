@@ -16,7 +16,7 @@ If the folder is not a Git repository yet:
 cd "D:\Code\mmu sharehub"
 git init -b main
 git add .
-git commit -m "Phase 1 + 2: UI foundation and Supabase authentication"
+git commit -m "Initial ShareHub build"
 ```
 
 If Git asks for your name and email:
@@ -38,11 +38,11 @@ git remote add origin https://github.com/YOUR_USERNAME/mmu-sharehub.git
 git push -u origin main
 ```
 
-Commit after each phase:
+Commit after each change:
 
 ```powershell
 git add .
-git commit -m "Phase 3: file upload and note metadata"
+git commit -m "Describe the change"
 git push
 ```
 
@@ -121,7 +121,7 @@ No API keys need to be added to Vercel. The anon key is public and already in
 - [ ] Password reset works.
 - [ ] Production domain is in Supabase URL Configuration.
 
-### Note management (Phase 4+)
+### Note management
 
 - [ ] Profile lists the signed-in student's uploads.
 - [ ] Edit a note's title and description; the change appears on Browse.
@@ -129,7 +129,7 @@ No API keys need to be added to Vercel. The anon key is public and already in
 - [ ] Delete a note; it disappears from Browse and Storage after confirmation.
 - [ ] A second account cannot edit or delete the first account's note.
 
-### Details and reports (Phase 5+)
+### Details and reports
 
 - [ ] Clicking a note title opens `note.html?id=...` with the full description.
 - [ ] Preview and Download work from the detail page.
@@ -138,7 +138,7 @@ No API keys need to be added to Vercel. The anon key is public and already in
 - [ ] The same student cannot report the same note twice.
 - [ ] Reports appear in Supabase → Table Editor → `reports`.
 
-### Uploads (Phase 3+)
+### Uploads
 
 - [ ] Upload a small PDF.
 - [ ] Files over 20 MB are rejected.

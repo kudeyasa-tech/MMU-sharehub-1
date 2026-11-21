@@ -1,11 +1,8 @@
 /**
- * Sample note data for Phase 1
- * -----------------------------
- * This lets the site work offline while Supabase is being set up.
- * Phase 3 replaces this with live documents from Supabase.
- *
- * Keep the field names the same as the Supabase documents so the
- * switch to the real database is as small as possible.
+ * Offline sample notes
+ * --------------------
+ * Used only when Supabase is not configured. The field names match the live
+ * `notes` table so the UI does not need a separate renderer.
  */
 
 export const FACULTIES = [

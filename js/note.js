@@ -16,6 +16,8 @@ import {
   getInitials,
 } from "./notes.js";
 import { createReport, getNoteById, getNotes, hasReported } from "./database.js";
+import { getFriendlyErrorMessage } from "./errors.js";
+import { safeFileUrl, withDownloadParam } from "./security.js";
 import { isSupabaseConfigured } from "./supabase-config.js";
 import { showToast } from "./main.js";
 
@@ -31,22 +33,6 @@ const reportMessage = document.getElementById("report-message");
 
 let currentNote = null;
 let currentUser = null;
-
-function safeUrl(value) {
-  const url = String(value || "");
-  return url.startsWith("https://") ? url : "";
-}
-
-function downloadLink(fileUrl, title) {
-  let fileName = title || "note";
-  try {
-    const fromPath = String(fileUrl).split("?")[0].split("/").pop();
-    if (fromPath) fileName = decodeURIComponent(fromPath);
-  } catch {
-    // Keep the fallback name.
-  }
-  return `${String(fileUrl).split("?")[0]}?download=${encodeURIComponent(fileName)}`;
-}
 
 function showMessage(text, type = "info") {
   if (!reportMessage) return;
@@ -89,9 +75,9 @@ function renderNote(note) {
   const typeClass = getFileTypeClass(note.file_type);
   const size = escapeHtml(formatFileSize(note.file_size));
   const date = escapeHtml(formatDate(note.created_at));
-  const fileUrl = safeUrl(note.file_url);
+  const fileUrl = safeFileUrl(note.file_url);
   const previewUrl = fileUrl ? escapeHtml(fileUrl) : "";
-  const downloadUrl = fileUrl ? escapeHtml(downloadLink(fileUrl, note.title)) : "";
+  const downloadUrl = fileUrl ? escapeHtml(withDownloadParam(fileUrl, note.title)) : "";
 
   if (titleEl) titleEl.textContent = note.title;
   if (subtitleEl) {
@@ -216,7 +202,7 @@ function bindReportButton() {
       reportDialog?.showModal();
     } catch (error) {
       console.warn("Could not check existing reports:", error);
-      showMessage(error?.message || "Could not open the report form.", "error");
+      showMessage(getFriendlyErrorMessage(error, "Could not open the report form."), "error");
       reportDialog?.showModal();
     } finally {
       button.disabled = false;
@@ -254,7 +240,7 @@ reportForm?.addEventListener("submit", async (event) => {
     showToast("Report sent. Thank you for helping keep the library safe.");
   } catch (error) {
     console.warn("Could not submit the report:", error);
-    showMessage(error?.message || "Could not send the report.", "error");
+    showMessage(getFriendlyErrorMessage(error, "Could not send the report."), "error");
   } finally {
     submit.disabled = false;
     submit.textContent = "Send report";

@@ -9,9 +9,13 @@
  * the backend switches on.
  */
 
+import { sampleNotes } from "./mock-data.js";
+import { isUuid } from "./security.js";
 import { isSupabaseConfigured } from "./supabase-config.js";
 import { getSupabase } from "./supabase.js";
-import { sampleNotes } from "./mock-data.js";
+
+const NOTE_COLUMNS =
+  "id, title, subject, faculty, year, description, file_url, file_type, file_size, uploader_id, uploader_name, created_at";
 
 /** Map a Postgres row to the shape used by the note-card renderer. */
 function rowToNote(row) {
@@ -44,22 +48,23 @@ export async function getNotes() {
     const supabase = await getSupabase();
     const { data, error } = await supabase
       .from("notes")
-      .select("*")
+      .select(NOTE_COLUMNS)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
     return (data || []).map(rowToNote);
   } catch (error) {
-    // The SQL migration has not been run yet. Keep the demo usable.
+    // A live project with a missing table should show an empty library, not
+    // pretend that sample notes are real uploads.
     const missingTable =
       error?.code === "PGRST205" ||
       String(error?.message || "").includes("Could not find the table");
 
     if (missingTable) {
       console.warn(
-        "Supabase notes table is missing. Run supabase/migrations/0001_initial.sql. Showing sample notes for now."
+        "Supabase notes table is missing. Run supabase/migrations/0001_initial.sql."
       );
-      return [...sampleNotes];
+      return [];
     }
 
     throw error;
@@ -72,8 +77,23 @@ export async function getNotes() {
  * @returns {Promise<object|undefined>}
  */
 export async function getNoteById(id) {
-  const notes = await getNotes();
-  return notes.find((note) => note.id === id);
+  const key = String(id || "");
+
+  if (!isUuid(key)) {
+    return isSupabaseConfigured
+      ? undefined
+      : sampleNotes.find((note) => note.id === key);
+  }
+
+  const supabase = await getSupabase();
+  const { data, error } = await supabase
+    .from("notes")
+    .select(NOTE_COLUMNS)
+    .eq("id", key)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data ? rowToNote(data) : undefined;
 }
 
 /**

@@ -1,17 +1,10 @@
 /**
  * Supabase Authentication helpers
  * --------------------------------
- * Phase 2 implements:
- *   - registerUser()
- *   - loginUser()
- *   - logoutUser()
- *   - sendPasswordReset()
- *   - watchAuthState()
- *   - getUserProfile()
- *   - ensureUserDocument()
- *
  * Supabase Auth handles passwords, sessions and reset emails. Row level
  * security policies in supabase/migrations/0001_initial.sql protect profiles.
+ * This module exposes registerUser, loginUser, logoutUser, sendPasswordReset,
+ * watchAuthState, getUserProfile and ensureUserDocument.
  */
 
 import { isSupabaseConfigured } from "./supabase-config.js";
@@ -89,15 +82,17 @@ export function getAuthErrorMessage(error, fallback) {
     return "Too many attempts. Wait a few minutes, then try again.";
   }
 
-  return fallback || error?.message || "Something went wrong. Please try again.";
+  // Never surface raw backend text. It can contain request IDs, column names
+  // or other details that help an attacker map the backend.
+  return fallback || "Something went wrong. Please try again.";
 }
 
 async function insertProfile(supabase, user, name) {
+  // Let Postgres set created_at. A browser clock should not decide it.
   const { error } = await supabase.from("profiles").insert({
     id: user.id,
     email: user.email || "",
     name,
-    created_at: new Date().toISOString(),
   });
 
   // 23505 = unique violation, which just means the profile already exists.
@@ -286,7 +281,7 @@ export async function sendPasswordReset(email) {
 /**
  * Watch the Supabase session. The callback receives (user, meta).
  * meta.error is set if the SDK or session could not be loaded.
- * @param {(user: object|null, meta: {configured: boolean, error?: Error}) => void} callback
+ * @param {(user: object|null, meta: {configured: boolean, event?: string, error?: Error}) => void} callback
  * @returns {() => void} unsubscribe
  */
 export function watchAuthState(callback) {

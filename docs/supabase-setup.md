@@ -1,8 +1,8 @@
 # Supabase setup guide
 
-This guide takes you from an empty Supabase account to a project ready for
-Phase 2 (Authentication). The site still works offline with sample notes, so you
-do not need to finish this today.
+This guide takes you from an empty Supabase account to a project ready for the
+live site. The site still works offline with sample notes until you paste a
+config, so you do not need to finish this today.
 
 **Cost:** Supabase Free is $0/month and needs **no credit card**.
 
@@ -75,7 +75,9 @@ This creates:
 - All row level security policies
 
 If you re-run it later, it is safe: the file uses `IF NOT EXISTS` and
-`DROP POLICY IF EXISTS`.
+`DROP POLICY IF EXISTS`, and it also replaces older constraints explicitly.
+Re-run it after upgrading this project so the file URL check, Storage extension
+check and profile identity trigger are installed.
 
 ---
 
@@ -181,13 +183,13 @@ been run. Re-run section 3.
 
 ## 7. What comes next
 
-Phase 3 is implemented: uploads, progress, metadata and public preview/download
-links all work once the SQL migration is run.
+The app code is complete: uploads with progress, note metadata, note detail
+pages, note management and the report flow all work once the SQL migration is
+run.
 
-Phases 4 and 5 are implemented: note management, note detail pages and the
-report flow are all in the code. **Re-run the migration** to install the
-`reports` table, the immutable-field trigger and the missing `notes` Storage
-bucket if you ran an older copy. It is safe to run again.
+**Re-run the migration** if you ran an older copy. It installs the `reports`
+table, the Storage bucket, the immutable-field triggers, the Storage extension
+check and the tighter `file_url` check. It is safe to run again.
 
 Remaining work is final testing with two accounts and the Vercel deployment,
 which needs your own accounts. Follow `docs/deployment.md`.

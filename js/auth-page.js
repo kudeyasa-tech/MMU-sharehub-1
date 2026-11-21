@@ -40,7 +40,11 @@ let redirecting = false;
 /** Only allow a local page name such as upload.html in ?next=. */
 function getDestination() {
   const next = params.get("next");
-  if (next && /^[a-z][a-z0-9-]*\.html$/i.test(next)) {
+  if (
+    next &&
+    /^[a-z][a-z0-9-]*\.html$/i.test(next) &&
+    !/^(login|register)\.html$/i.test(next)
+  ) {
     return next;
   }
   return "profile.html";

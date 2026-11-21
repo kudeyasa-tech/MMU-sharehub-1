@@ -2,8 +2,8 @@
  * Browse page
  * -----------
  * Loads notes, fills the filter dropdowns, and filters the list as the
- * student types or changes a filter. All filtering happens in the browser
- * for Phase 1. Supabase fetching is added in Phase 3.
+ * student types or changes a filter. Notes come from js/database.js, and the
+ * filtering itself stays in the browser.
  */
 
 import { filterNotes, getNotes, getUniqueValues } from "./database.js";

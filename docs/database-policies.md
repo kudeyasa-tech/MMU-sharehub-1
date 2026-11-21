@@ -34,6 +34,9 @@ created_at timestamptz
 | Insert | Owner only | `auth.uid() = id` |
 | Update | Owner only | `auth.uid() = id` |
 
+A `BEFORE UPDATE` trigger called `profiles_protect_identity` keeps `id`, `email`
+and `created_at` unchanged. Only the display name can be edited through the API.
+
 There is deliberately **no client-side delete policy**. Deleting a user is done
 from Supabase Auth, and the foreign key removes the profile.
 
@@ -47,7 +50,7 @@ id          uuid
 note_id     uuid  references notes(id) on delete cascade
 reporter_id uuid  references auth.users(id) on delete cascade
 reason      text  copyright | confidential | plagiarism | inappropriate | broken_file | other
-details     text
+details     text  max 500 characters
 status      text  open | reviewed | resolved
 created_at  timestamptz
 ```
@@ -70,7 +73,7 @@ subject       text    2–60 characters
 faculty       text    one of five faculties
 year          text    Year 1–4
 description   text    10–500 characters
-file_url      text    https URL
+file_url      text    this project's public notes Storage URL only
 file_type     text    PDF, DOC, DOCX, PPT, PPTX, TXT, JPG, JPEG, PNG
 file_size     bigint  > 0 and <= 20 MB
 uploader_id   uuid    references auth.users(id)
@@ -86,7 +89,10 @@ created_at    timestamptz
 | Delete | Uploader | `auth.uid() = uploader_id` |
 
 Guests can browse and open notes but cannot write. The `CHECK` constraints also
-reject bad metadata even if a student bypasses the form.
+reject bad metadata even if a student bypasses the form. In particular,
+`file_url` must begin with this project's public notes bucket URL, so a direct
+API call cannot point a card at an unrelated website. If you move to a different
+Supabase project, update the host in `0001_initial.sql` and re-run the migration.
 
 > **Immutable fields:** the migration adds a `BEFORE UPDATE` trigger called
 > `notes_protect_immutable`. Even the owner cannot change `id`, `file_url`,
@@ -112,7 +118,7 @@ Policies:
 | Operation | Who | Condition |
 |---|---|---|
 | Read | Everyone | `bucket_id = 'notes'` |
-| Insert | Signed-in user | Second folder equals `auth.uid()` |
+| Insert | Signed-in user | Second folder equals `auth.uid()`, filename has an allowed extension |
 | Delete | Signed-in user | Second folder equals `auth.uid()` |
 | Update | Nobody | Replace the file by deleting and re-uploading |
 
@@ -120,9 +126,15 @@ The bucket also enforces:
 
 - Maximum file size: **20 MB**
 - Allowed MIME types: PDF, Word, PowerPoint, plain text, JPEG, PNG
+- Allowed filename endings: `.pdf`, `.doc`, `.docx`, `.ppt`, `.pptx`, `.txt`, `.jpg`, `.jpeg`, `.png`
 
-The frontend repeats these checks in `js/storage.js` for fast feedback, but the
+The extension check matters because a browser can misreport a MIME type. The
+frontend repeats these checks in `js/storage.js` for fast feedback, but the
 Storage configuration is the real rule.
+
+The browser also checks the file URL origin again with `js/security.js` before
+opening a preview or starting a download. That stops a tampered row from
+sending students to another site.
 
 **Delete order:** the profile page deletes the `notes` row first, then removes
 the Storage object. If the second step fails, the file becomes an invisible

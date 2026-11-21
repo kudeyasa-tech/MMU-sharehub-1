@@ -1,7 +1,7 @@
 /**
  * Profile page controller
  * -----------------------
- * Phase 4 adds note management:
+ * Note management:
  *   - list the signed-in student's uploaded notes
  *   - edit title, subject, faculty, year and description
  *   - delete the note metadata and its Storage file together
@@ -12,6 +12,7 @@
 
 import { getUserProfile, watchAuthState } from "./auth.js";
 import { deleteNote, getNotes, updateNote } from "./database.js";
+import { getFriendlyErrorMessage } from "./errors.js";
 import { FACULTIES, YEARS } from "./mock-data.js";
 import { showToast } from "./main.js";
 import {
@@ -20,6 +21,7 @@ import {
   getFileTypeClass,
   getInitials,
 } from "./notes.js";
+import { safeFileUrl } from "./security.js";
 import { getStoragePathFromUrl } from "./storage.js";
 import { getSupabase } from "./supabase.js";
 
@@ -102,8 +104,8 @@ function renderNotes() {
       const size = escapeHtml(formatFileSize(note.file_size));
       const typeClass = getFileTypeClass(note.file_type);
       const type = escapeHtml(String(note.file_type || "FILE").toUpperCase());
-      const url = String(note.file_url || "");
-      const safeUrl = url.startsWith("https://") ? escapeHtml(url) : "";
+      const fileUrl = safeFileUrl(note.file_url);
+      const safeUrl = fileUrl ? escapeHtml(fileUrl) : "";
 
       return `
         <div class="profile-note-row" data-row-id="${escapeHtml(note.id)}">
@@ -193,7 +195,7 @@ editForm?.addEventListener("submit", async (event) => {
     showToast("Note details updated.");
   } catch (error) {
     console.warn("Could not update the note:", error);
-    setMessage(editMessage, error?.message || "Could not save the changes.", "error");
+    setMessage(editMessage, getFriendlyErrorMessage(error, "Could not save the changes."), "error");
   } finally {
     submit.disabled = false;
     submit.textContent = "Save changes";
@@ -246,7 +248,7 @@ confirmDeleteButton?.addEventListener("click", async () => {
     showToast("Note deleted.");
   } catch (error) {
     console.warn("Could not delete the note:", error);
-    setMessage(deleteMessage, error?.message || "Could not delete the note.", "error");
+    setMessage(deleteMessage, getFriendlyErrorMessage(error, "Could not delete the note."), "error");
   } finally {
     confirmDeleteButton.disabled = false;
     confirmDeleteButton.textContent = "Delete note";

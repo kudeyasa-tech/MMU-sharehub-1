@@ -1,9 +1,8 @@
 /**
  * Storage helpers
  * ---------------
- * Phase 1 contains the pure file-validation logic so it can be tested
- * without Supabase. Phase 3 adds uploadFile(), getFileUrl() and deleteFile()
- * using Supabase Storage.
+ * Pure file-validation logic. It gives fast feedback in the browser; the
+ * Storage bucket configuration repeats the same limits server-side.
  *
  * Rules of the upload:
  * - 20 MB maximum
@@ -91,6 +90,7 @@ export function sanitiseFileName(fileName) {
     .replace(/[^\w.\- ]+/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
+    .replace(/^\.+/, "")
     .slice(0, 120);
 }
 
@@ -145,22 +145,6 @@ export function validateNoteFile(file) {
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/* Phase 3: Supabase Storage                                                  */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Planned Phase 3 exports:
- *
- * uploadNoteFile({ file, userId, noteId, onProgress })
- *   - creates notes/{userId}/{noteId}/{safeFileName}
- *   - uses uploadBytesResumable() so the progress bar works
- *   - returns { downloadUrl, storagePath }
- *
- * deleteNoteFile(storagePath)
- *   - uses deleteObject(ref(storage, storagePath))
- *
- * getFileUrl(storagePath)
- *   - uses getDownloadURL(ref(storage, storagePath))
- */
-export const STORAGE_READY = false;
+/* Uploads are handled by js/upload.js using the Storage REST endpoint so the
+   browser can report real progress. The rules above are mirrored in the
+   `notes` bucket configuration in supabase/migrations/0001_initial.sql. */

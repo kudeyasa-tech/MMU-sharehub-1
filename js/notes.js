@@ -5,6 +5,8 @@
  * All values from the database are escaped before they are placed in HTML.
  */
 
+import { safeFileUrl, withDownloadParam } from "./security.js";
+
 /** Stop database text from being interpreted as HTML. */
 export function escapeHtml(value) {
   return String(value ?? "")
@@ -76,28 +78,6 @@ export function getFileTypeClass(fileType) {
   return allowed[String(fileType || "").toUpperCase()] || "file";
 }
 
-/** Only allow real HTTPS URLs from the database. */
-function safeFileUrl(value) {
-  const url = String(value || "");
-  return url.startsWith("https://") ? url : "";
-}
-
-/** Add Supabase Storage's download query parameter. */
-function downloadUrl(fileUrl, fallbackName) {
-  let fileName = fallbackName || "note";
-
-  try {
-    const fromPath = String(fileUrl).split("?")[0].split("/").pop();
-    if (fromPath) fileName = decodeURIComponent(fromPath);
-  } catch {
-    // Keep the fallback name if the URL cannot be decoded.
-  }
-
-  return `${String(fileUrl).split("?")[0]}?download=${encodeURIComponent(
-    fileName
-  )}`;
-}
-
 /**
  * Build the HTML for one note card.
  * @param {object} note
@@ -122,7 +102,7 @@ export function createNoteCard(note, options = {}) {
   const fileUrl = safeFileUrl(note.file_url);
   const previewUrl = fileUrl ? escapeHtml(fileUrl) : "";
   const downloadLink = fileUrl
-    ? escapeHtml(downloadUrl(fileUrl, note.title))
+    ? escapeHtml(withDownloadParam(fileUrl, note.title))
     : "";
 
   return `
