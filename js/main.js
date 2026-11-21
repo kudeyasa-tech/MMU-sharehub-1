@@ -172,14 +172,14 @@ document.addEventListener("click", (event) => {
   if (action === "preview") {
     showToast(
       title
-        ? `“${title}” is sample data. Real notes can be previewed from Supabase Storage.`
-        : "This is a sample note."
+        ? `“${title}” is one of the sample notes. Real files open in a new tab.`
+        : "This is one of the sample notes."
     );
     return;
   }
 
   if (action === "download") {
-    showToast("Downloads work on real notes stored in Supabase Storage.");
+    showToast("Downloads only work on real uploads. This one is a sample.");
     return;
   }
 
@@ -256,7 +256,7 @@ function updateAuthUI(user) {
     new URLSearchParams(window.location.search).get("welcome") === "1"
   ) {
     welcomeShown = true;
-    showToast(`Welcome to ShareHub, ${firstName(user)}. Your account is ready.`);
+    showToast(`Welcome back, ${firstName(user)}. Your shelf is ready.`);
   }
 
   // Page-specific scripts (profile.js) can react without a second listener.
@@ -268,7 +268,7 @@ function updateAuthUI(user) {
 watchAuthState((user, meta) => {
   if (meta.error) {
     showToast(
-      "Supabase could not be reached. Check your connection and your supabase-config.js values."
+      "Supabase did not answer. Check the connection and your config file."
     );
   }
 
@@ -294,7 +294,7 @@ watchAuthState((user, meta) => {
 
 /* Confirmation after a successful upload. */
 if (new URLSearchParams(window.location.search).get("published") === "1") {
-  showToast("Your note is live in the library. Thanks for sharing!");
+  showToast("Your note is on the shelf. Thanks for sharing it.");
 }
 
 /* Log out from any page that shows the button. */
@@ -306,7 +306,7 @@ document.querySelectorAll("[data-logout]").forEach((button) => {
 
     try {
       await logoutUser();
-      showToast("You have been signed out.");
+      showToast("Signed out. See you next time.");
       window.location.assign("index.html");
     } catch (error) {
       console.error("Could not sign out:", error);

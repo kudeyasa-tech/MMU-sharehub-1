@@ -209,7 +209,7 @@ function bindReportButton() {
     try {
       const alreadyReported = await hasReported(currentNote.id, currentUser.id);
       if (alreadyReported) {
-        showMessage("You have already reported this note. Thank you.", "error");
+        showMessage("You already reported this note. We have it.", "error");
         reportDialog?.showModal();
         return;
       }

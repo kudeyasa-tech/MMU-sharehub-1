@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Create a free MMU ShareHub account to upload and manage student notes.">
-  <meta name="theme-color" content="#1f4e79">
+  <meta name="description" content="Create a free MMU ShareHub account to upload and manage your notes.">
+  <meta name="theme-color" content="#183a5a">
   <title>Create account — MMU ShareHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -18,29 +18,21 @@
   <header class="site-header" data-header>
     <div class="container header-inner">
       <a class="brand" href="index.html" aria-label="MMU ShareHub home">
-        <span class="brand-mark">
-          <img src="assets/logo-mark.svg" alt="" width="41" height="41">
-        </span>
+        <span class="brand-mark"><img src="assets/logo-mark.svg" alt="" width="34" height="34"></span>
         <span class="brand-name">MMU <span>ShareHub</span></span>
       </a>
-
       <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span></span><span></span><span></span>
       </button>
-
       <nav class="site-nav" id="site-nav" aria-label="Main navigation">
         <div class="nav-links">
           <a class="nav-link" href="index.html" data-page="home">Home</a>
           <a class="nav-link" href="browse.html" data-page="browse">Browse notes</a>
         </div>
-
         <div class="nav-auth auth-guest">
           <a class="btn btn-ghost btn-sm" href="login.html">Log in</a>
           <a class="btn btn-primary btn-sm" href="register.html">Join free</a>
         </div>
-
         <div class="nav-auth auth-user" hidden>
           <a class="nav-link" href="upload.html" data-page="upload">Upload</a>
           <a class="nav-link nav-account" href="profile.html" data-page="profile">
@@ -53,53 +45,38 @@
     </div>
   </header>
 
-
   <main class="auth-page" id="main">
     <div class="container">
       <div class="auth-shell">
         <aside class="auth-aside" aria-labelledby="register-aside-title">
           <a class="auth-aside__brand" href="index.html" aria-label="MMU ShareHub home">
-            <span class="brand-mark">
-              <img src="assets/logo-mark.svg" alt="" width="36" height="36">
-            </span>
+            <span class="brand-mark"><img src="assets/logo-mark.svg" alt="" width="30" height="30"></span>
             MMU ShareHub
           </a>
 
-          <h2 id="register-aside-title">One account. A whole library to give back to.</h2>
-          <p>Joining is free. You only need an email address and a password.</p>
+          <h2 id="register-aside-title">Leave notes for the next batch.</h2>
+          <p>It takes an email and a password. No forms to print, no faculty approval to wait for.</p>
 
           <ul class="benefit-list">
-            <li>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-              Upload notes and keep them linked to your profile.
-            </li>
-            <li>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-              Edit or delete your uploads whenever you need to.
-            </li>
-            <li>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-              Browse and download everything for free, forever.
-            </li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg> Put your notes on your own shelf.</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg> Fix a wrong title without emailing anyone.</li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5L20 6"/></svg> Browsing and downloading stay free for everyone.</li>
           </ul>
 
           <div class="auth-quote">
-            <blockquote>“The best part is knowing the notes I spent hours making are still being used after I graduate.”</blockquote>
-            <footer>
-              <span class="avatar" aria-hidden="true">NI</span>
-              Year 3 Computing student
-            </footer>
+            <blockquote>“The notes I made in year one are still being used. That still surprises me a bit.”</blockquote>
+            <footer><span class="avatar" aria-hidden="true">NI</span> Year 3 Computing student</footer>
           </div>
         </aside>
 
         <section class="auth-form-wrap" aria-labelledby="register-title">
           <span class="eyebrow">Join the library</span>
           <h1 id="register-title">Create your account</h1>
-          <p class="auth-form-wrap__intro">A name, an email and a password. That is all it takes.</p>
+          <p class="auth-form-wrap__intro">Name, email, password. That is it.</p>
 
           <div class="setup-notice" data-supabase-notice hidden>
             <strong>Supabase is not configured yet.</strong>
-            <p>Paste your project URL and anon key into <code>js/supabase-config.js</code> to turn on accounts. The <a href="docs/supabase-setup.md" target="_blank" rel="noopener">setup guide</a> walks through it.</p>
+            <p>Paste your project URL and anon key into <code>js/supabase-config.js</code>. The <a href="docs/supabase-setup.md" target="_blank" rel="noopener">setup guide</a> walks through it.</p>
           </div>
 
           <form class="auth-form" id="register-form" data-auth-form="register">
@@ -116,14 +93,12 @@
 
             <div class="form-field">
               <label for="register-name">Full name</label>
-              <input id="register-name" name="name" type="text" autocomplete="name" placeholder="e.g. Aisyah Rahman" maxlength="80" required>
+              <input id="register-name" name="name" type="text" autocomplete="name" placeholder="Aisyah Rahman" maxlength="80" required>
             </div>
-
             <div class="form-field">
               <label for="register-email">Email address</label>
               <input id="register-email" name="email" type="email" autocomplete="email" placeholder="you@student.mmu.edu.my" required>
             </div>
-
             <div class="form-field">
               <label for="register-password">Password</label>
               <div class="password-field">
@@ -133,9 +108,8 @@
                   <svg class="eye-closed" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"/><path d="M10.6 6.2A9.7 9.7 0 0 1 12 6c6 0 9.5 6 9.5 6a16.4 16.4 0 0 1-3.1 3.8M6.2 6.5C4 8.1 2.5 12 2.5 12s3.5 6 9.5 6a9.7 9.7 0 0 0 4.2-.9"/></svg>
                 </button>
               </div>
-              <span class="form-hint">Use at least 8 characters. A passphrase is easier to remember than a random word.</span>
+              <span class="form-hint">Use at least 8 characters. A passphrase is easier to remember than one random word.</span>
             </div>
-
             <div class="form-field">
               <label for="register-confirm">Confirm password</label>
               <div class="password-field">
@@ -149,12 +123,11 @@
 
             <label class="checkbox-row">
               <input type="checkbox" name="terms" required>
-              <span>I will only upload notes I made myself or have permission to share.</span>
+              <span>I made these notes or have permission to share them. I understand students can download the file for free.</span>
             </label>
 
             <button class="btn btn-primary btn-block btn-lg" type="submit">Create account</button>
             <p class="form-message" data-form-message role="status"></p>
-
             <p class="form-foot">Already have an account? <a href="login.html">Log in</a></p>
           </form>
         </section>
@@ -167,50 +140,28 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <a class="brand" href="index.html" aria-label="MMU ShareHub home">
-            <span class="brand-mark">
-              <img src="assets/logo-mark.svg" alt="" width="41" height="41">
-            </span>
+            <span class="brand-mark"><img src="assets/logo-mark.svg" alt="" width="34" height="34"></span>
             <span class="brand-name">MMU <span>ShareHub</span></span>
           </a>
           <p>A student-run note library built to keep good study material moving forward instead of disappearing after the semester ends.</p>
-          <span class="footer-badge">Phase 5 · Launch ready</span>
+          <span class="footer-note">Student-made · Not an MMU service</span>
         </div>
-
         <div class="footer-col">
           <h2>Explore</h2>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="browse.html">Browse notes</a></li>
-            <li><a href="browse.html?sort=title">All subjects</a></li>
-            <li><a href="browse.html?sort=oldest">Oldest uploads</a></li>
-          </ul>
+          <ul><li><a href="index.html">Home</a></li><li><a href="browse.html">Browse notes</a></li><li><a href="browse.html?sort=title">All subjects</a></li><li><a href="browse.html?sort=oldest">Oldest uploads</a></li></ul>
         </div>
-
         <div class="footer-col">
           <h2>Account</h2>
-          <ul>
-            <li><a href="login.html">Log in</a></li>
-            <li><a href="register.html">Create account</a></li>
-            <li><a href="upload.html">Upload notes</a></li>
-            <li><a href="profile.html">My notes</a></li>
-          </ul>
+          <ul><li><a href="login.html">Log in</a></li><li><a href="register.html">Create account</a></li><li><a href="upload.html">Upload notes</a></li><li><a href="profile.html">My notes</a></li></ul>
         </div>
-
         <div class="footer-col">
           <h2>Project</h2>
-          <ul>
-            <li><a href="README.md" target="_blank" rel="noopener">README</a></li>
-            <li><a href="docs/supabase-setup.md" target="_blank" rel="noopener">Supabase setup</a></li>
-            <li><a href="docs/deployment.md" target="_blank" rel="noopener">Deployment guide</a></li>
-            <li><a href="docs/database-policies.md" target="_blank" rel="noopener">Database policies</a></li>
-          </ul>
+          <ul><li><a href="README.md" target="_blank" rel="noopener">README</a></li><li><a href="docs/supabase-setup.md" target="_blank" rel="noopener">Supabase setup</a></li><li><a href="docs/deployment.md" target="_blank" rel="noopener">Deployment guide</a></li><li><a href="docs/database-policies.md" target="_blank" rel="noopener">Database policies</a></li></ul>
         </div>
       </div>
-
       <div class="footer-disclaimer">
         <strong>Disclaimer:</strong> MMU ShareHub is a student-run platform. Users are solely responsible for the content they upload. Please ensure you have the right to share any notes or materials, and do not upload copyrighted exam papers, confidential university materials, or plagiarized content. We reserve the right to remove any content that violates these guidelines.
       </div>
-
       <div class="footer-bottom">
         <p>© <span data-year>2026</span> MMU ShareHub. Built for students.</p>
         <p>Student project — not an official MMU service.</p>
