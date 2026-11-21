@@ -1,0 +1,24 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Supabase CLI temporary files
+supabase/.temp/
+supabase/.branches/
+
+# Node modules (only needed if tooling is added later)
+node_modules/
+
+# Local test files
+coverage/

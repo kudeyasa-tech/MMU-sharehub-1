@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Upload your exam notes to MMU ShareHub and help the next batch of students. PDF, DOCX, PPTX, TXT and image files up to 20 MB.">
+  <meta name="theme-color" content="#1f4e79">
+  <title>Upload notes — MMU ShareHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="upload">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="MMU ShareHub home">
+        <span class="brand-mark">
+          <img src="assets/logo-mark.svg" alt="" width="41" height="41">
+        </span>
+        <span class="brand-name">MMU <span>ShareHub</span></span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav" data-nav-toggle>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <div class="nav-links">
+          <a class="nav-link" href="index.html" data-page="home">Home</a>
+          <a class="nav-link" href="browse.html" data-page="browse">Browse notes</a>
+        </div>
+
+        <div class="nav-auth auth-guest">
+          <a class="btn btn-ghost btn-sm" href="login.html">Log in</a>
+          <a class="btn btn-primary btn-sm" href="register.html">Join free</a>
+        </div>
+
+        <div class="nav-auth auth-user" hidden>
+          <a class="nav-link" href="upload.html" data-page="upload">Upload</a>
+          <a class="nav-link nav-account" href="profile.html" data-page="profile">
+            <span class="avatar nav-account__avatar" data-user-avatar aria-hidden="true">?</span>
+            <span class="nav-account__name" data-user-name>My notes</span>
+          </a>
+          <button class="btn btn-ghost btn-sm" type="button" data-logout>Log out</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="phase-banner">
+    <div class="container phase-banner__inner">
+      <span class="phase-banner__dot" aria-hidden="true"></span>
+      <span><strong>Phase 3:</strong> signed-in students can publish notes to Supabase Storage and the shared library.</span>
+      <a href="docs/supabase-setup.md" target="_blank" rel="noopener">Supabase setup guide</a>
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="page-hero" aria-labelledby="upload-title">
+      <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <span aria-current="page">Upload notes</span>
+        </nav>
+
+        <div class="page-hero__row">
+          <div>
+            <span class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span> Give something back</span>
+            <h1 id="upload-title">Share your notes.</h1>
+            <p>You already survived the semester. A clear set of notes could be exactly what someone else needs before their final.</p>
+          </div>
+          <div class="page-hero__aside">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/></svg>
+            Signed-in students only
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container upload-layout">
+      <div>
+        <!-- Guest gate. Phase 2 will hide this for signed-in users. -->
+        <section class="gate-card" id="upload-gate" aria-labelledby="gate-title">
+          <span class="gate-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M12 15v2"/></svg>
+          </span>
+          <span class="eyebrow">Upload access</span>
+          <h2 id="gate-title">Log in to share your notes</h2>
+          <p>Uploading is limited to signed-in students so every note has a real owner who can edit or remove it later. Browsing and downloading stay open to everyone.</p>
+
+          <div class="gate-card__actions">
+            <a class="btn btn-primary btn-lg" href="login.html">Log in to upload</a>
+            <a class="btn btn-ghost btn-lg" href="register.html">Create free account</a>
+          </div>
+
+          <ul class="mini-trust" aria-label="Upload guarantees">
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              You control your uploads
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              File checks on every upload
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              No cost, ever
+            </li>
+          </ul>
+        </section>
+
+        <!-- The real form. Shown after a student signs in. -->
+        <section class="upload-panel" id="upload-panel" aria-labelledby="upload-form-heading" hidden>
+          <div class="upload-panel__head">
+            <h2 id="upload-form-heading">Add a note to the library</h2>
+            <p>Clear titles and honest descriptions help students find the right file faster.</p>
+            <span class="phase-note">Files are checked, uploaded to Supabase Storage and saved to the library.</span>
+          </div>
+
+          <form class="upload-form" id="upload-form">
+            <div class="form-grid">
+              <div class="form-field form-field--full">
+                <label for="note-title">Note title</label>
+                <input id="note-title" name="title" type="text" minlength="5" maxlength="100" placeholder="e.g. Database Systems — Final Revision Notes" required>
+              </div>
+
+              <div class="form-field">
+                <label for="note-subject">Subject</label>
+                <input id="note-subject" name="subject" type="text" minlength="2" maxlength="60" placeholder="e.g. Database Systems" required>
+              </div>
+
+              <div class="form-field">
+                <label for="note-faculty">Faculty</label>
+                <select id="note-faculty" name="faculty" required>
+                  <option value="">Select a faculty</option>
+                  <option value="Computing &amp; Informatics">Computing &amp; Informatics</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Business">Business</option>
+                  <option value="Creative Multimedia">Creative Multimedia</option>
+                  <option value="Applied Communication">Applied Communication</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="note-year">Year</label>
+                <select id="note-year" name="year" required>
+                  <option value="">Select a year</option>
+                  <option value="Year 1">Year 1</option>
+                  <option value="Year 2">Year 2</option>
+                  <option value="Year 3">Year 3</option>
+                  <option value="Year 4">Year 4</option>
+                </select>
+              </div>
+
+              <div class="form-field form-field--full">
+                <label for="note-description">Short description</label>
+                <textarea id="note-description" name="description" minlength="10" maxlength="500" placeholder="What does this cover? Which exam or topic is it best for?" required></textarea>
+              </div>
+
+              <div class="form-field form-field--full">
+                <label class="dropzone">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                  <strong>Choose a file or drag it here</strong>
+                  <span>PDF, DOC, DOCX, PPT, PPTX, TXT, JPG or PNG · maximum 20 MB</span>
+                  <input class="file-input" id="note-file" name="file" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png" required>
+                </label>
+                <div class="selected-file" id="selected-file" aria-live="polite"></div>
+                <progress class="progress" id="upload-progress" max="100" value="0" aria-label="Upload progress">0%</progress>
+              </div>
+            </div>
+
+            <div class="checkbox-row">
+              <input id="upload-permission" name="permission" type="checkbox" required>
+              <label for="upload-permission">I made these notes or have permission to share them. I understand that students can download the file for free.</label>
+            </div>
+
+            <button class="btn btn-primary btn-lg" type="submit">Publish notes</button>
+            <p class="form-message" data-form-message role="status"></p>
+          </form>
+        </section>
+      </div>
+
+      <!-- Helpful upload guidance -->
+      <aside class="side-stack" aria-label="Upload tips">
+        <section class="info-card">
+          <h2>Before you upload</h2>
+          <p>Small checks now save time later.</p>
+          <ul class="checklist">
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              Keep the file under 20 MB.
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              Use one of the supported document or image formats.
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              Remove personal information you do not want to share.
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg>
+              Only upload work you made or have permission to share.
+            </li>
+          </ul>
+        </section>
+
+        <section class="info-card info-card--accent">
+          <h2>A better title goes a long way</h2>
+          <p>Include the unit, the exam period and what makes the note useful.</p>
+          <p class="info-card__quote">Good: “Database Systems — Normalization + SQL Final Revision (Trimester 2)”<br><br>Less helpful: “DB notes final final v2”.</p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html" aria-label="MMU ShareHub home">
+            <span class="brand-mark">
+              <img src="assets/logo-mark.svg" alt="" width="41" height="41">
+            </span>
+            <span class="brand-name">MMU <span>ShareHub</span></span>
+          </a>
+          <p>A student-run note library built to keep good study material moving forward instead of disappearing after the semester ends.</p>
+          <span class="footer-badge">Phase 5 · Launch ready</span>
+        </div>
+
+        <div class="footer-col">
+          <h2>Explore</h2>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="browse.html">Browse notes</a></li>
+            <li><a href="browse.html?sort=title">All subjects</a></li>
+            <li><a href="browse.html?sort=oldest">Oldest uploads</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h2>Account</h2>
+          <ul>
+            <li><a href="login.html">Log in</a></li>
+            <li><a href="register.html">Create account</a></li>
+            <li><a href="upload.html">Upload notes</a></li>
+            <li><a href="profile.html">My notes</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h2>Project</h2>
+          <ul>
+            <li><a href="README.md" target="_blank" rel="noopener">README</a></li>
+            <li><a href="docs/supabase-setup.md" target="_blank" rel="noopener">Supabase setup</a></li>
+            <li><a href="docs/deployment.md" target="_blank" rel="noopener">Deployment guide</a></li>
+            <li><a href="docs/database-policies.md" target="_blank" rel="noopener">Database policies</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-disclaimer">
+        <strong>Disclaimer:</strong> MMU ShareHub is a student-run platform. Users are solely responsible for the content they upload. Please ensure you have the right to share any notes or materials, and do not upload copyrighted exam papers, confidential university materials, or plagiarized content. We reserve the right to remove any content that violates these guidelines.
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> MMU ShareHub. Built for students.</p>
+        <p>Student project — not an official MMU service.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/upload.js"></script>
+</body>
+</html>

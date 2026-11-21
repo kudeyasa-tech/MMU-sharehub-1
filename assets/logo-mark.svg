@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MMU ShareHub mark">
+  <rect width="64" height="64" rx="12" fill="#1f4e79" />
+  <path d="M17 20.5h9.8c2.9 0 5.2 2.3 5.2 5.2V46c0-2.9-2.3-5.2-5.2-5.2H17V20.5Z" fill="#fff" opacity=".96" />
+  <path d="M47 20.5h-9.8c-2.9 0-5.2 2.3-5.2 5.2V46c0-2.9 2.3-5.2 5.2-5.2H47V20.5Z" fill="#fff" opacity=".72" />
+  <path d="M23 27h5.2M23 32h5.2M35.8 27H41M35.8 32H41" stroke="#1f4e79" stroke-width="2.2" stroke-linecap="round" />
+  <path d="M32 46V38" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+</svg>
