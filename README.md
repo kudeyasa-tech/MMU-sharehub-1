@@ -38,16 +38,6 @@ Supabase free tier needs no credit card. Free projects pause after one week of i
 ---
 
 ## Run locally
-
-A local server is required because ES modules do not load from `file://`.
-
-```powershell
-cd "D:\Code\mmu sharehub"
-npx serve . -l 5500
-```
-
-or:
-
 ```powershell
 py -m http.server 5500
 ```
