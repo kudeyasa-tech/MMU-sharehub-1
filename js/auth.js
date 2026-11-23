@@ -29,6 +29,16 @@ function nameFromUser(user) {
   return "Student";
 }
 
+/** Seconds a rate-limit error asks us to wait before retrying. */
+export function getAuthRetrySeconds(error) {
+  const message = String(error?.message || "").toLowerCase();
+  const seconds = message.match(/after\s+(\d+)\s*second/i);
+  const minutes = message.match(/after\s+(\d+)\s*minute/i);
+  if (seconds) return Math.min(Number(seconds[1]), 300);
+  if (minutes) return Math.min(Number(minutes[1]) * 60, 300);
+  return 0;
+}
+
 /** Turn a Supabase/Postgres error into a short, useful sentence. */
 export function getAuthErrorMessage(error, fallback) {
   if (error instanceof SupabaseNotConfiguredError) {
@@ -78,8 +88,28 @@ export function getAuthErrorMessage(error, fallback) {
     return "Supabase rejected the anon key. Check the value in js/supabase-config.js.";
   }
 
-  if (message.includes("too many requests") || message.includes("rate limit")) {
-    return "Too many attempts. Wait a few minutes, then try again.";
+  const status = Number(error?.status || 0);
+  const isRateLimit =
+    status === 429 ||
+    message.includes("too many requests") ||
+    message.includes("rate limit") ||
+    message.includes("for security purposes");
+
+  if (isRateLimit) {
+    // Supabase's built-in email provider allows only 2 emails per hour for the
+    // whole project. With "Confirm email" on, the third signup in an hour fails
+    // for everyone, whatever their email address. That needs a dashboard fix
+    // (turn confirmation off or add custom SMTP) - it is not a student mistake.
+    if (message.includes("email") && message.includes("rate")) {
+      return "The library has hit its email limit for this hour. Please try again later, or use Continue with Google to sign up instantly.";
+    }
+
+    const wait = getAuthRetrySeconds(error);
+    if (wait > 0) {
+      return `Too many attempts. Please wait ${wait} seconds, then try again.`;
+    }
+
+    return "Too many attempts from this network. Please wait a few minutes, then try again. Continue with Google also works.";
   }
 
   // Never surface raw backend text. It can contain request IDs, column names

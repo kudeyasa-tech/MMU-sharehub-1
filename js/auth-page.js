@@ -8,6 +8,7 @@
 
 import {
   getAuthErrorMessage,
+  getAuthRetrySeconds,
   isSupabaseConfigured,
   loginUser,
   registerUser,
@@ -70,15 +71,47 @@ function setBusy(button, busy, label) {
   if (!button) return;
 
   if (busy) {
+    stopCooldown();
     button.dataset.originalLabel ||= button.textContent;
     button.textContent = label;
     button.disabled = true;
     button.classList.add("is-loading");
   } else {
+    stopCooldown();
     button.textContent = button.dataset.originalLabel || label;
     button.disabled = false;
     button.classList.remove("is-loading");
   }
+}
+
+let cooldownTimer = null;
+
+function stopCooldown() {
+  if (cooldownTimer) {
+    window.clearInterval(cooldownTimer);
+    cooldownTimer = null;
+  }
+}
+
+/* Keep a rate-limited user from retrying repeatedly and extending the block. */
+function startCooldown(button, seconds, label) {
+  stopCooldown();
+  let remaining = Math.min(Math.max(seconds, 1), 300);
+  button.disabled = true;
+  button.classList.add("is-loading");
+  button.textContent = `${label} in ${remaining}s`;
+
+  cooldownTimer = window.setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      stopCooldown();
+      button.disabled = false;
+      button.classList.remove("is-loading");
+      button.textContent = label;
+      return;
+    }
+    button.textContent = `${label} in ${remaining}s`;
+  }, 1000);
 }
 
 function redirectTo(target) {
@@ -271,7 +304,14 @@ form?.addEventListener("submit", async (event) => {
     console.warn("Authentication failed:", error);
     showMessage(getAuthErrorMessage(error), "error");
     isSubmitting = false;
-    setBusy(submitButton, false, "Log in");
+
+    const retrySeconds = getAuthRetrySeconds(error);
+    const idleLabel = isRegister ? "Create account" : "Log in";
+    if (retrySeconds > 0 && submitButton) {
+      startCooldown(submitButton, retrySeconds, idleLabel);
+    } else {
+      setBusy(submitButton, false, idleLabel);
+    }
   }
 });
 

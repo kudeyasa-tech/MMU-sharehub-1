@@ -177,7 +177,38 @@ been run. Re-run section 3.
 | "Failed to fetch" | Wrong URL, offline, or blocked network | Check the Project URL and your connection |
 | "Email link is invalid or expired" | Redirect URL not allowed | Add the exact `http://localhost:5500/` to Redirect URLs |
 | Reset link opens the home page | Expected | The app processes the token, then redirects to `login.html?reset=1` where you set a new password |
+| "Too many attempts" / "Email rate limit exceeded" | Supabase rate limit, not an email-domain check | See "Too many attempts during registration" below |
 | Site works, then pauses | Free project inactivity | Restore the project in the Supabase dashboard |
+
+### Too many attempts during registration
+
+This is a **Supabase rate limit**, not a restriction on school emails. The app
+accepts any valid email address; there is no `@student.mmu.edu.my` allow-list, so
+changing the address does not help. Two limits are involved:
+
+| Limit | Default | Why students hit it |
+|---|---|---|
+| Emails sent by Supabase Auth | **2 per hour for the whole project** with the built-in email provider | With "Confirm email" on, every signup sends a confirmation email. After two signups in an hour, registration fails for **everyone**, whatever their email address. |
+| Sign-ups and sign-ins | 30 requests per 5 minutes per IP address | A campus network shares one public IP, so a tutorial group registering at the same time exhausts the bucket. |
+
+Fix in the Supabase dashboard:
+
+1. **Authentication → Providers → Email → turn "Confirm email" OFF** for a
+   classroom project. Signup then returns a session immediately and the app
+   sends the student straight to their profile. No confirmation email is sent,
+   so the 2/hour email cap stops blocking registration. (The app already
+   handles both paths.) If you must keep confirmation, add a **custom SMTP**
+   provider under Authentication → Email → SMTP Settings, or a Send Email hook,
+   which lifts the built-in cap.
+2. **Authentication → Rate Limits → Sign-ups and sign-ins**: raise the limit
+   (for example 300 per 5 minutes) so a whole class behind one campus IP can
+   register in the same sitting.
+3. As an immediate workaround, students can use **Continue with Google**: OAuth
+   accounts do not need a confirmation email. This only works once Google
+   sign-in is configured (section 4b).
+
+The page now also explains which limit was hit and disables the button for the
+wait time Supabase reports, so repeated taps do not make the block worse.
 
 ---
 
